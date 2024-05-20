@@ -2,9 +2,12 @@ import React from "react";
 import {useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet, Text, SafeAreaView} from 'react-native';
 import { Pressable } from "react-native";
+import SurveyRepository from "../../api/repositories/surveyRepository";
+
 
 type DecisionFieldProps = {
-    text: string
+    text: string,
+    decisionId: string
 }
 
 const DecisionField = (props: DecisionFieldProps) => {
@@ -19,35 +22,48 @@ const DecisionField = (props: DecisionFieldProps) => {
 const VotingScreen = () => {
 
     // const decisions: React.JSX.Element[] = [];
+    const surveyRepository =  new SurveyRepository();
 
     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
+    const [surveyData, setSurveyData] = useState<any>({});
+
+    useEffect(() => {
+        surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
+        .then((response) => {
+            console.log(response.data)
+            setSurveyData(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+            setSurveyData(undefined);
+        });
+    }, []);
 
     useEffect(() => {
         let decisionArray: React.JSX.Element[] = [];
+        
+        if(surveyData && surveyData.decisions) {
+            surveyData.decisions.forEach((decision: any) => {
+                decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id}/>);
+            });
 
-        for(let i = 1; i < 4; i++) {
-            decisionArray.push(<DecisionField text={"Вариант " + i} key={i}/>)
+            setDecisions(decisionArray);
         }
 
-        setDecisions(decisionArray);
+        
 
-    }, [])
+    }, [surveyData]);
 
     return (
         <SafeAreaView style={styles.mainContainer}>
-        <ScrollView>
+        <ScrollView contentContainerStyle={styles.mainContainer}>
             <View>
                 <View style={styles.blockSection}>
-                    <Text style={styles.titleText}>Заголовок опроса</Text>
+                    <Text style={styles.titleText}>{ surveyData ? surveyData.title : 'Заголовок опроса' }</Text>
                 </View>
 
                 <View style={styles.blockSection}>
-                    <Text style={styles.descryptionText}>
-                        Lorem Ipsum - это текст-"рыба", часто используемый в печати и вэб-дизайне. 
-                        Lorem Ipsum является стандартной "рыбой" для текстов на латинице с начала XVI века. 
-                        В то время некий безымянный печатник создал большую коллекцию размеров и форм шрифтов,
-                        используя Lorem Ipsum для распечатки образцов.
-                    </Text>
+                    <Text style={styles.descryptionText}>{ surveyData ? surveyData.content : 'SurveyContent' }</Text>
                 </View>
             </View>
 
