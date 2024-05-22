@@ -11,6 +11,19 @@ import {DecisionDTO} from "../../dto/surveyAnalyticsDto";
 import { randomUUID } from "crypto";
 
 
+type VotingScreenProps = {
+    surveyData: any,
+    setSurveyData: React.Dispatch<any>
+}
+
+type SurveyDetailsScreenProps = {
+    surveyData: any,
+    setSurveyData: React.Dispatch<any>,
+    surveyDetails: SurveyAnalyticsDTO|undefined,
+    setSurveyDetails:  React.Dispatch<React.SetStateAction<SurveyAnalyticsDTO | undefined>>
+}
+
+
 type DecisionFieldProps = {
     text: string,
     decisionId: string
@@ -25,51 +38,49 @@ const DecisionField = (props: DecisionFieldProps) => {
 }
 
 
-const VotingScreen = () => {
+const VotingScreen = (props: VotingScreenProps) => {
 
     // const decisions: React.JSX.Element[] = [];
     const surveyRepository =  new SurveyRepository();
 
     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
-    const [surveyData, setSurveyData] = useState<any>({});
+    // const [surveyData, setSurveyData] = useState<any>({});
+
+    // useEffect(() => {
+    //     surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
+    //     .then((response) => {
+    //         // console.log(response.data)
+    //         props.setSurveyData(response.data);
+    //     })
+    //     .catch((error) => {
+    //         console.log(error);
+    //         props.setSurveyData(undefined);
+    //     });
+    // }, []);
 
     useEffect(() => {
-        surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
-        .then((response) => {
-            // console.log(response.data)
-            setSurveyData(response.data);
-        })
-        .catch((error) => {
-            console.log(error);
-            setSurveyData(undefined);
-        });
-    }, []);
-
-    useEffect(() => {
+        console.log('VotingScreen useEffect');
         let decisionArray: React.JSX.Element[] = [];
         
-        if(surveyData && surveyData.decisions) {
-            surveyData.decisions.forEach((decision: any) => {
+        if(props.surveyData && props.surveyData.decisions) {
+            props.surveyData.decisions.forEach((decision: any) => {
                 decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id}/>);
             });
 
             setDecisions(decisionArray);
         }
-
-        
-
-    }, [surveyData]);
+    }, [props.surveyData]);
 
     return (
         <SafeAreaView style={styles.mainContainer}>
         <ScrollView contentContainerStyle={styles.mainContainer}>
             <View>
                 <View style={styles.blockSection}>
-                    <Text style={styles.titleText}>{ surveyData ? surveyData.title : 'Заголовок опроса' }</Text>
+                    <Text style={styles.titleText}>{ props.surveyData ? props.surveyData.title : 'Заголовок опроса' }</Text>
                 </View>
 
                 <View style={styles.blockSection}>
-                    <Text style={styles.descryptionText}>{ surveyData ? surveyData.content : 'SurveyContent' }</Text>
+                    <Text style={styles.descryptionText}>{ props.surveyData ? props.surveyData.content : 'SurveyContent' }</Text>
                 </View>
             </View>
 
@@ -121,40 +132,41 @@ const ParticipantListItem = (props: ParticipantListItemProps) => {
     )
 }
 
-const SurveyDetailsScreen = () => {
-    const surveyRepository: SurveyRepository = new SurveyRepository();
-    const surveyService: SurveyService = new SurveyService(surveyRepository);
+const SurveyDetailsScreen = (props: SurveyDetailsScreenProps) => {
+    // const surveyRepository: SurveyRepository = new SurveyRepository();
+    // const surveyService: SurveyService = new SurveyService(surveyRepository);
 
-    const [surveyData, setSurveyData] = useState<any>(undefined);
-    const [surveyDetails, setSurveyDetails] = useState<SurveyAnalyticsDTO|undefined>(undefined);
+    // const [surveyData, setSurveyData] = useState<any>(undefined);
+    // const [surveyDetails, setSurveyDetails] = useState<SurveyAnalyticsDTO|undefined>(undefined);
 
     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
 
-    useEffect(() => {
-        surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
-        .then((response) => {
-            setSurveyData(response.data);
-            setSurveyDetails(surveyService.explore(response.data));
-            // console.log(surveyDetails?.decisions);
-        })
-        .catch((err) => {
-            setSurveyData(undefined);
-        });
-    }, []);
+    // useEffect(() => {
+    //     surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
+    //     .then((response) => {
+    //         setSurveyData(response.data);
+    //         setSurveyDetails(surveyService.explore(response.data));
+    //         // console.log(surveyDetails?.decisions);
+    //     })
+    //     .catch((err) => {
+    //         setSurveyData(undefined);
+    //     });
+    // }, []);
 
     useEffect(() => {
-        if(surveyDetails && surveyDetails.decisions) {
+        console.log('SurveyDetailsScreen useEffect');
+        if(props.surveyDetails && props.surveyDetails.decisions) {
             let decisionAnalyticsFieldArray: Array<React.JSX.Element> = [];
             let i = 0;
 
-            surveyDetails.decisions.forEach(decision => {
+            props.surveyDetails.decisions.forEach(decision => {
                 decisionAnalyticsFieldArray.push(<DecisionAnalyticsField key={i} decisionAnalytics={decision} />);
                 i++;
             });
 
             setDecisions(decisionAnalyticsFieldArray);
         }
-    }, [surveyDetails])
+    }, [props.surveyDetails])
     
     return (
         <SafeAreaView style={styles.mainContainer}>
@@ -164,9 +176,9 @@ const SurveyDetailsScreen = () => {
                         <Text style={{fontWeight: "500", fontSize: 16}}>Создатель опроса</Text>
                     </View>
                     <View style={styles.creatorTextWrapper}>
-                        <Text style={styles.creatorText}>{surveyDetails?.creator.username}</Text>
+                        <Text style={styles.creatorText}>{props.surveyDetails?.creator.username}</Text>
                         <Text style={styles.creatorText}>
-                            {surveyDetails?.creator.bio ? surveyDetails?.creator.username : '*Обычно здесь информация о пользователе ^-^'}
+                            {props.surveyDetails?.creator.bio ? props.surveyDetails?.creator.username : '*Обычно здесь информация о пользователе ^-^'}
                         </Text>
                     </View>
                 </View>
@@ -178,7 +190,7 @@ const SurveyDetailsScreen = () => {
                     <View style={styles.analyticsContainer}>
                         <View style={styles.analyticsItems}>
                             <Text>Голоса</Text>
-                            <Text style={{color: 'green'}}>{surveyDetails?.voteCount}</Text>
+                            <Text style={{color: 'green'}}>{props.surveyDetails?.voteCount}</Text>
                         </View>
 
                         <View style={styles.analyticsItems}>
@@ -202,7 +214,7 @@ const SurveyDetailsScreen = () => {
                     </View>
                     <View style={styles.participantList}> 
                         {
-                            surveyDetails?.participants.map((participant, i) => [<ParticipantListItem key={i}  username={participant} />])
+                            props.surveyDetails?.participants.map((participant, i) => [<ParticipantListItem key={i}  username={participant} />])
                         }
                     </View>
                 </View>
@@ -211,20 +223,57 @@ const SurveyDetailsScreen = () => {
     )
 }
 
-const renderScene = SceneMap({
-    first: VotingScreen,
-    second: SurveyDetailsScreen,
-  });
+
 
 
 const SurveyScreen = () => {
+    //
+    const surveyRepository =  new SurveyRepository();
+
+    const [surveyData, setSurveyData] = useState<any>({});
+
+    const surveyService: SurveyService = new SurveyService(surveyRepository);
+
+    const [surveyDetails, setSurveyDetails] = useState<SurveyAnalyticsDTO|undefined>(undefined);
+    //
+
     const layout = useWindowDimensions();
+
+    const renderScene = SceneMap({
+        first: VotingScreen.bind(null, {surveyData, setSurveyData}),
+        second: SurveyDetailsScreen.bind(null, {surveyData, setSurveyData, surveyDetails, setSurveyDetails}),
+      });
 
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         { key: 'first', title: 'Голосовать' },
         { key: 'second', title: 'Детали опроса' },
     ]);
+
+    useEffect(() => {
+        surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
+        .then((response) => {
+            // console.log(response.data)
+            setSurveyData(response.data);
+            setSurveyDetails(surveyService.explore(response.data));
+        })
+        .catch((error) => {
+            console.log(error);
+            setSurveyData(undefined);
+        });
+    }, []);
+
+    // useEffect(() => {
+    //     surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
+    //     .then((response) => {
+    //         setSurveyData(response.data);
+    //         setSurveyDetails(surveyService.explore(response.data));
+    //         // console.log(surveyDetails?.decisions);
+    //     })
+    //     .catch((err) => {
+    //         setSurveyData(undefined);
+    //     });
+    // }, []);
 
     return(
         <TabView
