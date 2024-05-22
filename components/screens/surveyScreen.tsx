@@ -40,23 +40,8 @@ const DecisionField = (props: DecisionFieldProps) => {
 
 const VotingScreen = (props: VotingScreenProps) => {
 
-    // const decisions: React.JSX.Element[] = [];
     const surveyRepository =  new SurveyRepository();
-
     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
-    // const [surveyData, setSurveyData] = useState<any>({});
-
-    // useEffect(() => {
-    //     surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
-    //     .then((response) => {
-    //         // console.log(response.data)
-    //         props.setSurveyData(response.data);
-    //     })
-    //     .catch((error) => {
-    //         console.log(error);
-    //         props.setSurveyData(undefined);
-    //     });
-    // }, []);
 
     useEffect(() => {
         console.log('VotingScreen useEffect');
@@ -133,25 +118,8 @@ const ParticipantListItem = (props: ParticipantListItemProps) => {
 }
 
 const SurveyDetailsScreen = (props: SurveyDetailsScreenProps) => {
-    // const surveyRepository: SurveyRepository = new SurveyRepository();
-    // const surveyService: SurveyService = new SurveyService(surveyRepository);
-
-    // const [surveyData, setSurveyData] = useState<any>(undefined);
-    // const [surveyDetails, setSurveyDetails] = useState<SurveyAnalyticsDTO|undefined>(undefined);
 
     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
-
-    // useEffect(() => {
-    //     surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
-    //     .then((response) => {
-    //         setSurveyData(response.data);
-    //         setSurveyDetails(surveyService.explore(response.data));
-    //         // console.log(surveyDetails?.decisions);
-    //     })
-    //     .catch((err) => {
-    //         setSurveyData(undefined);
-    //     });
-    // }, []);
 
     useEffect(() => {
         console.log('SurveyDetailsScreen useEffect');
@@ -223,26 +191,25 @@ const SurveyDetailsScreen = (props: SurveyDetailsScreenProps) => {
     )
 }
 
-
-
-
 const SurveyScreen = () => {
-    //
+    
     const surveyRepository =  new SurveyRepository();
-
-    const [surveyData, setSurveyData] = useState<any>({});
-
     const surveyService: SurveyService = new SurveyService(surveyRepository);
-
+    const [surveyData, setSurveyData] = useState<any>({});
     const [surveyDetails, setSurveyDetails] = useState<SurveyAnalyticsDTO|undefined>(undefined);
-    //
 
     const layout = useWindowDimensions();
 
-    const renderScene = SceneMap({
-        first: VotingScreen.bind(null, {surveyData, setSurveyData}),
-        second: SurveyDetailsScreen.bind(null, {surveyData, setSurveyData, surveyDetails, setSurveyDetails}),
-      });
+    const renderScene = ({ route  }) => {
+        switch (route.key) {
+          case 'first':
+            return <VotingScreen surveyData={surveyData} setSurveyData={setSurveyData}/>;
+          case 'second':
+            return <SurveyDetailsScreen surveyData={surveyData} setSurveyData={setSurveyData} surveyDetails={surveyDetails} setSurveyDetails={setSurveyDetails}/>;
+          default:
+            return null;
+        }
+      };
 
     const [index, setIndex] = useState(0);
     const [routes] = useState([
@@ -253,7 +220,6 @@ const SurveyScreen = () => {
     useEffect(() => {
         surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
         .then((response) => {
-            // console.log(response.data)
             setSurveyData(response.data);
             setSurveyDetails(surveyService.explore(response.data));
         })
@@ -262,18 +228,6 @@ const SurveyScreen = () => {
             setSurveyData(undefined);
         });
     }, []);
-
-    // useEffect(() => {
-    //     surveyRepository.getSurvey('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
-    //     .then((response) => {
-    //         setSurveyData(response.data);
-    //         setSurveyDetails(surveyService.explore(response.data));
-    //         // console.log(surveyDetails?.decisions);
-    //     })
-    //     .catch((err) => {
-    //         setSurveyData(undefined);
-    //     });
-    // }, []);
 
     return(
         <TabView
