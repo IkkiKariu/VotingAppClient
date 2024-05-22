@@ -17,7 +17,7 @@ const apiConfig = {
     getParticipatedSyrveys: "survey/participated",
 
     // decisions
-    getDecisionVote: "survey/decision/vote",
+    createVote: "survey/decision/vote",
 }
 
 export default apiConfig;
