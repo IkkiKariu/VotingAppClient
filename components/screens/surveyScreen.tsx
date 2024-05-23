@@ -193,6 +193,9 @@ const SurveyScreen = () => {
     
     const surveyRepository =  new SurveyRepository();
     const surveyService: SurveyService = new SurveyService(surveyRepository);
+
+    const [isVoted, setIsVoted] = useState<boolean>();
+
     const [surveyData, setSurveyData] = useState<any>({});
     const [surveyDetails, setSurveyDetails] = useState<SurveyAnalyticsDTO|undefined>(undefined);
 
@@ -201,7 +204,7 @@ const SurveyScreen = () => {
     const renderScene = ({ route  }) => {
         switch (route.key) {
           case 'first':
-            return <VotingScreen surveyData={surveyData} setSurveyData={setSurveyData}/>;
+            return <VotingScreen surveyData={surveyData} setSurveyData={setSurveyData} isVoted={isVoted}/>;
           case 'second':
             return <SurveyDetailsScreen surveyData={surveyData} setSurveyData={setSurveyData} surveyDetails={surveyDetails} setSurveyDetails={setSurveyDetails}/>;
           default:
@@ -224,6 +227,15 @@ const SurveyScreen = () => {
         .catch((error) => {
             console.log(error);
             setSurveyData(undefined);
+        });
+
+        surveyRepository.isVoted('1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', '663cbe4b2be151.28212116')
+        .then((response) => {
+            const data: any = response.data;
+            
+            if(data && data.response_status === 'success' && data.data) {
+                setIsVoted(data.data.is_paricipated);
+            }
         });
     }, []);
 

@@ -15,6 +15,7 @@ const apiConfig = {
     createSurvey: "survey/create",
     deleteSurvey: "survey/delete",
     getParticipatedSyrveys: "survey/participated",
+    isVoted: "survey/isVoted",
 
     // decisions
     createVote: "survey/decision/vote",

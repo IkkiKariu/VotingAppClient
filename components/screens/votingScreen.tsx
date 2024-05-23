@@ -6,20 +6,56 @@ import SurveyRepository from "../../api/repositories/surveyRepository";
 
 type VotingScreenProps = {
     surveyData: any,
-    setSurveyData: React.Dispatch<any>
+    setSurveyData: React.Dispatch<any>,
+    isVoted: boolean|undefined
 }
 
 type DecisionFieldProps = {
     text: string,
-    decisionId: string
+    decisionId: string,
+    isVoted: boolean|undefined
 }
 
+// type ResetButtonProps = {
+//     isVoted: boolean|undefined
+// }
+
 const DecisionField = (props: DecisionFieldProps) => {
-    return (
-        <Pressable style={styles.decisionField}>
-            <Text style={styles.resetVoicesButtonText}>{props.text}</Text>
-        </Pressable>
-    )
+    if(!props.isVoted) {
+        return (
+            <Pressable style={styles.decisionField}>
+                <Text style={styles.resetVoicesButtonText}>{props.text}</Text>
+            </Pressable>
+        )
+    }
+    else {
+        return (
+            <Pressable style={styles.decisionFieldDisabled} disabled={true}>
+                <Text style={styles.resetVoicesButtonText}>{props.text}</Text>
+            </Pressable>
+        )
+    }
+}
+
+type ResetVoicesButtonProps = {
+    isVoted: boolean|undefined
+}
+
+const ResetVoicesButton = (props: ResetVoicesButtonProps) => {
+    if(props.isVoted) {
+        return (
+            <Pressable style={styles.resetVoicesButton}>
+                <Text style={styles.resetVoicesButtonText}>Сбросить голоса</Text>
+            </Pressable>
+        )
+    }
+    else {
+        return (
+            <Pressable style={styles.resetVoicesButtonDisabled} disabled={true}>
+                <Text style={styles.resetVoicesButtonDisabledText}>Сбросить голоса</Text>
+            </Pressable>
+        )
+    }
 }
 
 const VotingScreen = (props: VotingScreenProps) => {
@@ -30,10 +66,10 @@ const VotingScreen = (props: VotingScreenProps) => {
     useEffect(() => {
         console.log('VotingScreen useEffect');
         let decisionArray: React.JSX.Element[] = [];
-        
+
         if(props.surveyData && props.surveyData.decisions) {
             props.surveyData.decisions.forEach((decision: any) => {
-                decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id}/>);
+                decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id} isVoted={props.isVoted}/>);
             });
 
             setDecisions(decisionArray);
@@ -54,13 +90,11 @@ const VotingScreen = (props: VotingScreenProps) => {
             </View>
 
             <View style={styles.blockSection}>
-                {decisions?.map(el => { return el})}
+                {decisions?.map(el => { return el })}
             </View>
 
             <View style={styles.blockSection}>
-                <Pressable style={styles.resetVoicesButton}>
-                    <Text style={styles.resetVoicesButtonText}>Сбросить голоса</Text>
-                </Pressable>
+                <ResetVoicesButton isVoted={props.isVoted}/>
             </View>
 
         </ScrollView>
@@ -113,6 +147,41 @@ const styles = StyleSheet.create({
         color: '#454544'
     },
     resetVoicesButton: {
+        backgroundColor: 'red',
+        height: 50,
+        maxHeight: 50,
+        minHeight: 50,
+        width: 310,
+        minWidth: 310,
+        maxWidth: 310,
+        borderRadius: 25,
+        display: 'flex',
+        justifyContent: 'center'
+    },
+    resetVoicesButtonDisabled: {
+        backgroundColor: 'gray',
+        height: 50,
+        maxHeight: 50,
+        minHeight: 50,
+        width: 310,
+        minWidth: 310,
+        maxWidth: 310,
+        borderRadius: 25,
+        display: 'flex',
+        justifyContent: 'center'
+    },
+    resetVoicesButtonText: {
+        // borderWidth: 1,
+        textAlign: 'center',
+        fontSize: 17
+    },
+    resetVoicesButtonDisabledText: {
+        // borderWidth: 1,
+        textAlign: 'center',
+        fontSize: 17,
+        color: 'white'
+    },
+    decisionField: {
         backgroundColor: 'white',
         height: 50,
         maxHeight: 50,
@@ -122,15 +191,11 @@ const styles = StyleSheet.create({
         maxWidth: 310,
         borderRadius: 15,
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        margin: 10
     },
-    resetVoicesButtonText: {
-        // borderWidth: 1,
-        textAlign: 'center',
-        fontSize: 15
-    },
-    decisionField: {
-        backgroundColor: 'white',
+    decisionFieldDisabled: {
+        backgroundColor: 'gray',
         height: 50,
         maxHeight: 50,
         minHeight: 50,
