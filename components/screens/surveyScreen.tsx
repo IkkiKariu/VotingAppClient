@@ -1,195 +1,193 @@
 import React from "react";
 import {useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet, Text, SafeAreaView} from 'react-native';
-import { Pressable, useWindowDimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
 import SurveyRepository from "../../api/repositories/surveyRepository";
 import { TabView, SceneMap } from 'react-native-tab-view';
-import UserRepository from "@/api/repositories/userRepository";
 import {SurveyAnalyticsDTO} from "../../dto/surveyAnalyticsDto";
 import SurveyService from "../../services/surveyService";
-import {DecisionDTO} from "../../dto/surveyAnalyticsDto";
-import { randomUUID } from "crypto";
+import VotingScreen from "./votingScreen"
+import SurveyDetailsScreen from "./surveyDetailsScreen";
+
+// type VotingScreenProps = {
+//     surveyData: any,
+//     setSurveyData: React.Dispatch<any>
+// }
+
+// type SurveyDetailsScreenProps = {
+//     surveyData: any,
+//     setSurveyData: React.Dispatch<any>,
+//     surveyDetails: SurveyAnalyticsDTO|undefined,
+//     setSurveyDetails:  React.Dispatch<React.SetStateAction<SurveyAnalyticsDTO | undefined>>
+// }
 
 
-type VotingScreenProps = {
-    surveyData: any,
-    setSurveyData: React.Dispatch<any>
-}
+// type DecisionFieldProps = {
+//     text: string,
+//     decisionId: string
+// }
 
-type SurveyDetailsScreenProps = {
-    surveyData: any,
-    setSurveyData: React.Dispatch<any>,
-    surveyDetails: SurveyAnalyticsDTO|undefined,
-    setSurveyDetails:  React.Dispatch<React.SetStateAction<SurveyAnalyticsDTO | undefined>>
-}
-
-
-type DecisionFieldProps = {
-    text: string,
-    decisionId: string
-}
-
-const DecisionField = (props: DecisionFieldProps) => {
-    return (
-        <Pressable style={styles.decisionField}>
-            <Text style={styles.resetVoicesButtonText}>{props.text}</Text>
-        </Pressable>
-    )
-}
+// const DecisionField = (props: DecisionFieldProps) => {
+//     return (
+//         <Pressable style={styles.decisionField}>
+//             <Text style={styles.resetVoicesButtonText}>{props.text}</Text>
+//         </Pressable>
+//     )
+// }
 
 
-const VotingScreen = (props: VotingScreenProps) => {
+// const VotingScreen = (props: VotingScreenProps) => {
 
-    const surveyRepository =  new SurveyRepository();
-    const [decisions, setDecisions] = useState<React.JSX.Element[]>();
+//     const surveyRepository =  new SurveyRepository();
+//     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
 
-    useEffect(() => {
-        console.log('VotingScreen useEffect');
-        let decisionArray: React.JSX.Element[] = [];
+//     useEffect(() => {
+//         console.log('VotingScreen useEffect');
+//         let decisionArray: React.JSX.Element[] = [];
         
-        if(props.surveyData && props.surveyData.decisions) {
-            props.surveyData.decisions.forEach((decision: any) => {
-                decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id}/>);
-            });
+//         if(props.surveyData && props.surveyData.decisions) {
+//             props.surveyData.decisions.forEach((decision: any) => {
+//                 decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id}/>);
+//             });
 
-            setDecisions(decisionArray);
-        }
-    }, [props.surveyData]);
+//             setDecisions(decisionArray);
+//         }
+//     }, [props.surveyData]);
 
-    return (
-        <SafeAreaView style={styles.mainContainer}>
-        <ScrollView contentContainerStyle={styles.mainContainer}>
-            <View>
-                <View style={styles.blockSection}>
-                    <Text style={styles.titleText}>{ props.surveyData ? props.surveyData.title : 'Заголовок опроса' }</Text>
-                </View>
+//     return (
+//         <SafeAreaView style={styles.mainContainer}>
+//         <ScrollView contentContainerStyle={styles.mainContainer}>
+//             <View>
+//                 <View style={styles.blockSection}>
+//                     <Text style={styles.titleText}>{ props.surveyData ? props.surveyData.title : 'Заголовок опроса' }</Text>
+//                 </View>
 
-                <View style={styles.blockSection}>
-                    <Text style={styles.descryptionText}>{ props.surveyData ? props.surveyData.content : 'SurveyContent' }</Text>
-                </View>
-            </View>
+//                 <View style={styles.blockSection}>
+//                     <Text style={styles.descryptionText}>{ props.surveyData ? props.surveyData.content : 'SurveyContent' }</Text>
+//                 </View>
+//             </View>
 
-            <View style={styles.blockSection}>
-                {decisions?.map(el => { return el})}
-            </View>
+//             <View style={styles.blockSection}>
+//                 {decisions?.map(el => { return el})}
+//             </View>
 
-            <View style={styles.blockSection}>
-                <Pressable style={styles.resetVoicesButton}>
-                    <Text style={styles.resetVoicesButtonText}>Сбросить голоса</Text>
-                </Pressable>
-            </View>
+//             <View style={styles.blockSection}>
+//                 <Pressable style={styles.resetVoicesButton}>
+//                     <Text style={styles.resetVoicesButtonText}>Сбросить голоса</Text>
+//                 </Pressable>
+//             </View>
 
-        </ScrollView>
-        </SafeAreaView>
-    )
-}
+//         </ScrollView>
+//         </SafeAreaView>
+//     )
+// }
 
-type decisionAnalyticsFieldProps = {
-    decisionAnalytics: DecisionDTO
-}
+// type decisionAnalyticsFieldProps = {
+//     decisionAnalytics: DecisionDTO
+// }
 
-const DecisionAnalyticsField = (props: decisionAnalyticsFieldProps) => {
-    return (
-        <View style={styles.decisionAnalyticsField}>
-            <Text style={{fontWeight:'500', fontSize: 15}}>{props.decisionAnalytics.content}</Text>
-            <View style={styles.statisticsSection}>
-                <View style={styles.statisticsSectionContent}>
-                    <Text>Голоса</Text>
-                    <Text style={{color: 'green'}}>{props.decisionAnalytics.voteCount}</Text>
-                </View>
+// const DecisionAnalyticsField = (props: decisionAnalyticsFieldProps) => {
+//     return (
+//         <View style={styles.decisionAnalyticsField}>
+//             <Text style={{fontWeight:'500', fontSize: 15}}>{props.decisionAnalytics.content}</Text>
+//             <View style={styles.statisticsSection}>
+//                 <View style={styles.statisticsSectionContent}>
+//                     <Text>Голоса</Text>
+//                     <Text style={{color: 'green'}}>{props.decisionAnalytics.voteCount}</Text>
+//                 </View>
 
-                <View style={styles.statisticsSectionContent}>
-                    <Text>Доля</Text>
-                    <Text style={{color: 'green'}}>{props.decisionAnalytics.precentage + '%'}</Text>
-                </View>
-            </View>
-        </View>
-    )
-}
+//                 <View style={styles.statisticsSectionContent}>
+//                     <Text>Доля</Text>
+//                     <Text style={{color: 'green'}}>{props.decisionAnalytics.precentage + '%'}</Text>
+//                 </View>
+//             </View>
+//         </View>
+//     )
+// }
 
-type ParticipantListItemProps = {
-    username: string;
-}
+// type ParticipantListItemProps = {
+//     username: string;
+// }
 
-const ParticipantListItem = (props: ParticipantListItemProps) => {
-    return (
-        <Text style={styles.participantListItem}>{props.username}</Text>
-    )
-}
+// const ParticipantListItem = (props: ParticipantListItemProps) => {
+//     return (
+//         <Text style={styles.participantListItem}>{props.username}</Text>
+//     )
+// }
 
-const SurveyDetailsScreen = (props: SurveyDetailsScreenProps) => {
+// const SurveyDetailsScreen = (props: SurveyDetailsScreenProps) => {
 
-    const [decisions, setDecisions] = useState<React.JSX.Element[]>();
+//     const [decisions, setDecisions] = useState<React.JSX.Element[]>();
 
-    useEffect(() => {
-        console.log('SurveyDetailsScreen useEffect');
-        if(props.surveyDetails && props.surveyDetails.decisions) {
-            let decisionAnalyticsFieldArray: Array<React.JSX.Element> = [];
-            let i = 0;
+//     useEffect(() => {
+//         console.log('SurveyDetailsScreen useEffect');
+//         if(props.surveyDetails && props.surveyDetails.decisions) {
+//             let decisionAnalyticsFieldArray: Array<React.JSX.Element> = [];
+//             let i = 0;
 
-            props.surveyDetails.decisions.forEach(decision => {
-                decisionAnalyticsFieldArray.push(<DecisionAnalyticsField key={i} decisionAnalytics={decision} />);
-                i++;
-            });
+//             props.surveyDetails.decisions.forEach(decision => {
+//                 decisionAnalyticsFieldArray.push(<DecisionAnalyticsField key={i} decisionAnalytics={decision} />);
+//                 i++;
+//             });
 
-            setDecisions(decisionAnalyticsFieldArray);
-        }
-    }, [props.surveyDetails])
+//             setDecisions(decisionAnalyticsFieldArray);
+//         }
+//     }, [props.surveyDetails])
     
-    return (
-        <SafeAreaView style={styles.mainContainer}>
-            <ScrollView contentContainerStyle={{...styles.mainContainer, justifyContent: 'flex-start'}}>
-                <View style={styles.blockSection}>
-                    <View style={styles.sectionTitleContainer}>
-                        <Text style={{fontWeight: "500", fontSize: 16}}>Создатель опроса</Text>
-                    </View>
-                    <View style={styles.creatorTextWrapper}>
-                        <Text style={styles.creatorText}>{props.surveyDetails?.creator.username}</Text>
-                        <Text style={styles.creatorText}>
-                            {props.surveyDetails?.creator.bio ? props.surveyDetails?.creator.username : '*Обычно здесь информация о пользователе ^-^'}
-                        </Text>
-                    </View>
-                </View>
+//     return (
+//         <SafeAreaView style={styles.mainContainer}>
+//             <ScrollView contentContainerStyle={{...styles.mainContainer, justifyContent: 'flex-start'}}>
+//                 <View style={styles.blockSection}>
+//                     <View style={styles.sectionTitleContainer}>
+//                         <Text style={{fontWeight: "500", fontSize: 16}}>Создатель опроса</Text>
+//                     </View>
+//                     <View style={styles.creatorTextWrapper}>
+//                         <Text style={styles.creatorText}>{props.surveyDetails?.creator.username}</Text>
+//                         <Text style={styles.creatorText}>
+//                             {props.surveyDetails?.creator.bio ? props.surveyDetails?.creator.username : '*Обычно здесь информация о пользователе ^-^'}
+//                         </Text>
+//                     </View>
+//                 </View>
 
-                <View style={styles.blockSection}>
-                    <View style={styles.sectionTitleContainer}>
-                        <Text style={{fontWeight: "500", fontSize: 16}}>Аналитика</Text>
-                    </View>
-                    <View style={styles.analyticsContainer}>
-                        <View style={styles.analyticsItems}>
-                            <Text>Голоса</Text>
-                            <Text style={{color: 'green'}}>{props.surveyDetails?.voteCount}</Text>
-                        </View>
+//                 <View style={styles.blockSection}>
+//                     <View style={styles.sectionTitleContainer}>
+//                         <Text style={{fontWeight: "500", fontSize: 16}}>Аналитика</Text>
+//                     </View>
+//                     <View style={styles.analyticsContainer}>
+//                         <View style={styles.analyticsItems}>
+//                             <Text>Голоса</Text>
+//                             <Text style={{color: 'green'}}>{props.surveyDetails?.voteCount}</Text>
+//                         </View>
 
-                        <View style={styles.analyticsItems}>
-                            <Text>Статус</Text>
-                            <Text style={{color: 'green'}}>Активен</Text>
-                        </View>
-                    </View>
-                </View>
+//                         <View style={styles.analyticsItems}>
+//                             <Text>Статус</Text>
+//                             <Text style={{color: 'green'}}>Активен</Text>
+//                         </View>
+//                     </View>
+//                 </View>
 
-                <View style={styles.blockSection}>
-                    <View style={styles.sectionTitleContainer}>
-                        <Text style={{fontSize: 16, fontWeight: '500'}}>Решения</Text>
-                    </View>
+//                 <View style={styles.blockSection}>
+//                     <View style={styles.sectionTitleContainer}>
+//                         <Text style={{fontSize: 16, fontWeight: '500'}}>Решения</Text>
+//                     </View>
 
-                    {decisions?.map(el => el)}
-                </View>
+//                     {decisions?.map(el => el)}
+//                 </View>
 
-                <View style={styles.blockSection}>
-                    <View style={styles.sectionTitleContainer}>
-                        <Text style={{fontSize: 16, fontWeight: '500'}}>Участники опроса</Text>
-                    </View>
-                    <View style={styles.participantList}> 
-                        {
-                            props.surveyDetails?.participants.map((participant, i) => [<ParticipantListItem key={i}  username={participant} />])
-                        }
-                    </View>
-                </View>
-            </ScrollView>
-        </SafeAreaView>    
-    )
-}
+//                 <View style={styles.blockSection}>
+//                     <View style={styles.sectionTitleContainer}>
+//                         <Text style={{fontSize: 16, fontWeight: '500'}}>Участники опроса</Text>
+//                     </View>
+//                     <View style={styles.participantList}> 
+//                         {
+//                             props.surveyDetails?.participants.map((participant, i) => [<ParticipantListItem key={i}  username={participant} />])
+//                         }
+//                     </View>
+//                 </View>
+//             </ScrollView>
+//         </SafeAreaView>    
+//     )
+// }
 
 const SurveyScreen = () => {
     

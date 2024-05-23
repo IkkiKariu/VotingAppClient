@@ -1,5 +1,5 @@
 const apiConfig = {
-    baseUrl: "http://192.168.1.3:8000/api/",
+    baseUrl: "http://192.168.1.5:8000/api/",
     // registration
     register: "register",
 
