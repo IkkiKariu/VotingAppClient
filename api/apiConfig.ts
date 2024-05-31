@@ -14,11 +14,14 @@ const apiConfig = {
     getSurvey: "survey/show",
     createSurvey: "survey/create",
     deleteSurvey: "survey/delete",
-    getParticipatedSyrveys: "survey/participated",
+    getParticipatedSurveys: "survey/participated",
     isVoted: "survey/isVoted",
 
     // decisions
     createVote: "survey/decision/vote",
+
+    //votes
+    resetVotes: "survey/decision/votes/reset"
 }
 
 export default apiConfig;

@@ -3,17 +3,22 @@ import {useEffect, useState} from 'react';
 import {View, ScrollView, StyleSheet, Text, SafeAreaView} from 'react-native';
 import { Pressable } from "react-native";
 import SurveyRepository from "../../api/repositories/surveyRepository";
+import SurveyService from "../../services/surveyService";
 
 type VotingScreenProps = {
     surveyData: any,
     setSurveyData: React.Dispatch<any>,
-    isVoted: boolean|undefined
+    isVoted: boolean|undefined,
+    setIsVoted: React.Dispatch<boolean>,
+    surveyPublicUid: string
 }
 
 type DecisionFieldProps = {
     text: string,
-    decisionId: string,
-    isVoted: boolean|undefined
+    decisionId: number,
+    isVoted: boolean|undefined,
+    setIsVoted: React.Dispatch<boolean>,
+    surveyPublicUid: string
 }
 
 // type ResetButtonProps = {
@@ -21,9 +26,26 @@ type DecisionFieldProps = {
 // }
 
 const DecisionField = (props: DecisionFieldProps) => {
+
+    const surveyService: SurveyService = new SurveyService(new SurveyRepository());
+
+    const onPressHandler = () => {
+        surveyService.vote({surveyPublicUid: props.surveyPublicUid, decisionId: props.decisionId})
+        .then((response) => {
+            // console.log(`createVote response_status: ${response.data.response_status}`);
+            let requestStatus = response.data.response_status === 'success' ? true : false
+            if(requestStatus) {
+                props.setIsVoted(true);
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+    }
+    
     if(!props.isVoted) {
         return (
-            <Pressable style={styles.decisionField}>
+            <Pressable style={styles.decisionField} onPress={onPressHandler}>
                 <Text style={styles.resetVoicesButtonText}>{props.text}</Text>
             </Pressable>
         )
@@ -38,13 +60,43 @@ const DecisionField = (props: DecisionFieldProps) => {
 }
 
 type ResetVoicesButtonProps = {
-    isVoted: boolean|undefined
+    isVoted: boolean|undefined,
+    setIsVoted: React.Dispatch<boolean>, 
+    surveyData: any
 }
 
 const ResetVoicesButton = (props: ResetVoicesButtonProps) => {
+    const surveyRepository = new SurveyRepository();
+    
+    let decisionIdList: Array<number> = [];
+    
+    if(props.surveyData && props.surveyData.decisions) {
+        props.surveyData.decisions.forEach(decision => {
+            decisionIdList.push(decision.id)
+        });
+
+        // console.log(decisionIdList);
+    }
+    console.log(`voted: ${typeof(props.isVoted)}`);
+
+    const onPressHandler = () => {
+        surveyRepository.deleteVotes(
+            '1|876GjJRxTrUMsCM0WbLlq2hmR7aKD8FVCWidBTy0d2613700', 
+            '663cbe4b2be151.28212116',
+            decisionIdList 
+        ).then(response => {
+            console.log(`Reset votes response: ${response.data.response_status}`)
+            if(response.data.response_status == 'success'){
+                props.setIsVoted(false);
+            }
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
     if(props.isVoted) {
         return (
-            <Pressable style={styles.resetVoicesButton}>
+            <Pressable style={styles.resetVoicesButton} onPress={onPressHandler}>
                 <Text style={styles.resetVoicesButtonText}>Сбросить голоса</Text>
             </Pressable>
         )
@@ -69,12 +121,17 @@ const VotingScreen = (props: VotingScreenProps) => {
 
         if(props.surveyData && props.surveyData.decisions) {
             props.surveyData.decisions.forEach((decision: any) => {
-                decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id} isVoted={props.isVoted}/>);
+                decisionArray.push(<DecisionField text={decision.content} decisionId={decision.id} key={decision.id}
+                isVoted={props.isVoted} surveyPublicUid={props.surveyPublicUid} setIsVoted={props.setIsVoted}/>);
             });
 
             setDecisions(decisionArray);
         }
     }, [props.surveyData]);
+
+    const handleDecisionButtonOnPress = () => {
+
+    }
 
     return (
         <SafeAreaView style={styles.mainContainer}>
@@ -94,7 +151,7 @@ const VotingScreen = (props: VotingScreenProps) => {
             </View>
 
             <View style={styles.blockSection}>
-                <ResetVoicesButton isVoted={props.isVoted}/>
+                <ResetVoicesButton isVoted={props.isVoted} surveyData={props.surveyData} setIsVoted={props.setIsVoted}/>
             </View>
 
         </ScrollView>
@@ -173,13 +230,12 @@ const styles = StyleSheet.create({
     resetVoicesButtonText: {
         // borderWidth: 1,
         textAlign: 'center',
-        fontSize: 17
+        fontSize: 17,
     },
     resetVoicesButtonDisabledText: {
         // borderWidth: 1,
         textAlign: 'center',
         fontSize: 17,
-        color: 'white'
     },
     decisionField: {
         backgroundColor: 'white',
@@ -206,25 +262,6 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         margin: 10
-    },
-    creatorText: {
-        backgroundColor: 'white',
-        fontSize: 16
-    },
-    creatorTextWrapper: {
-        // borderWidth: 1,
-        display: 'flex',
-        alignItems: 'flex-start',
-        backgroundColor: 'white',
-        width: 320,
-        minWidth: 320,
-        maxWidth: 320,
-        height: 110,
-        minHeight: 110,
-        borderRadius: 15,
-        justifyContent: 'space-between',
-        padding: 20,
-        paddingHorizontal: 30 
     },
     sectionTitleContainer: {
         // borderWidth: 1,

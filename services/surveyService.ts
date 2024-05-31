@@ -2,6 +2,7 @@ import SurveyRepository from "../api/repositories/surveyRepository";
 import userData from "../userData";
 import VoteDTO from "../dto/voteDto";
 import {SurveyAnalyticsDTO} from "../dto/surveyAnalyticsDto";
+import axios, { AxiosResponse } from 'axios';
 
 class SurveyService
 {
@@ -12,19 +13,9 @@ class SurveyService
         this.surveyRepository = surveyRepository;
     }
 
-    public vote(vote: VoteDTO): boolean|undefined
+    public vote(vote: VoteDTO): Promise<AxiosResponse>
     {
-        let requestStatus: boolean|undefined = undefined;
-
-        this.surveyRepository.createVote(userData.apiToken, vote)
-        .then((response) => {
-            requestStatus = response.data.response_status === 'success' ? true : false
-        })
-        .catch(() => {
-            requestStatus = false;
-        });
-
-        return requestStatus;
+        return this.surveyRepository.createVote(userData.apiToken, vote);
     }
 
     public explore(surveyData: any): SurveyAnalyticsDTO
@@ -73,7 +64,6 @@ class SurveyService
             voteCount: voteCounter
         }
 
-        // console.log(decisionsDto)
         return surveyAnalyticsDto;
     }
 }

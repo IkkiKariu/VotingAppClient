@@ -1,6 +1,6 @@
 type VoteDTO = {
     surveyPublicUid: string,
-    decisionId: string
+    decisionId: number
 }
 
 

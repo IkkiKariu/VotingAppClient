@@ -45,6 +45,34 @@ class SurveyRepository
             data: {survey_public_uid: surveyPublicUid}
         });
     }
+
+    public deleteVotes(bearerToken: string, surveyPublicUid: string, decisionIdList: Array<number>)
+    {
+        console.log("Repo");
+        console.log(surveyPublicUid);
+        console.log(decisionIdList);
+        console.log(bearerToken);
+
+        return axios({
+            method: 'post',
+            // baseURL: apiConfig.baseUrl,
+            url: apiConfig.baseUrl + apiConfig.resetVotes,
+            headers: {
+                Authorization: `Bearer ${bearerToken}`,
+                "Content-type": "application/json; charset=UTF-8",
+            },
+            data: {survey_public_uid: surveyPublicUid, decision_id_list: decisionIdList}
+        });
+    }
+
+    public getParticipatedSurveys (bearerToken: string): Promise<AxiosResponse> {
+        return axios({
+            method:'get',
+            baseURL: apiConfig.baseUrl,
+            url: apiConfig.getParticipatedSurveys,
+            headers: {Authorization: 'Bearer ${bearerToken}'}
+        });
+    }
 }
 
 
