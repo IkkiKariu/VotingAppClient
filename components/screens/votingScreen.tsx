@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         color: '#454544'
     },
     resetVoicesButton: {
-        backgroundColor: 'red',
+        backgroundColor: 'white',
         height: 50,
         maxHeight: 50,
         minHeight: 50,

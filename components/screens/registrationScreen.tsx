@@ -90,5 +90,5 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         top: 430,
         left:150, 
-      }
+    }
 });
