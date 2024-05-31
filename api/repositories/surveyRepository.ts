@@ -70,7 +70,7 @@ class SurveyRepository
             method:'get',
             baseURL: apiConfig.baseUrl,
             url: apiConfig.getParticipatedSurveys,
-            headers: {Authorization: 'Bearer ${bearerToken}'}
+            headers: {Authorization: `Bearer ${bearerToken}`}
         });
     }
 }
